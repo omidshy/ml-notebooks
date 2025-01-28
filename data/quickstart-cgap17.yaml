@@ -1,0 +1,60 @@
+general:
+    run_id: quickstart-cgap17
+    progress: logged
+
+# train a SchNet model ...
+model:
+    offset:
+        # note the "+" prefix syntax: refer to the
+        # data2objects package for more details
+        +FixedOffset: { C: -148.314002 }
+    many-body:
+        +SchNet:
+            elements: [C]
+            cutoff: 4.0 # radial cutoff in Å
+            layers: 3
+            channels: 64
+            self_interaction: linear
+
+# ... on structures from local files ...
+data:
+    train:
+        +file_dataset:
+            path: train-cgap17.xyz
+            cutoff: 4.0
+            n: 1280
+            shuffle: false
+    valid:
+        +file_dataset:
+            path: val-cgap17.xyz
+            cutoff: 4.0
+
+# ... on both energy and forces (weighted 1:1) ...
+loss:
+    - +PerAtomEnergyLoss()
+    - +PropertyLoss: { property: forces, metric: RMSE }
+
+# ... with the following settings ...
+fitting:
+    trainer_kwargs:
+        max_epochs: 250
+        accelerator: auto
+        check_val_every_n_epoch: 5
+
+    optimizer:
+        +Optimizer:
+            name: Adam
+            lr: 0.01
+
+    scheduler:
+        +LRScheduler:
+            name: ReduceLROnPlateau
+            factor: 0.5
+            patience: 10
+
+    loader_kwargs:
+        batch_size: 64
+
+# ... and log to Weights & Biases
+wandb: null
+#    project: graph-pes-quickstart
