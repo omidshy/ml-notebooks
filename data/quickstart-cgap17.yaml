@@ -2,7 +2,7 @@ general:
     run_id: quickstart-cgap17
     progress: logged
 
-# train a SchNet model ...
+# train a lightweight SchNet model ...
 model:
     offset:
         # note the "+" prefix syntax: refer to the
