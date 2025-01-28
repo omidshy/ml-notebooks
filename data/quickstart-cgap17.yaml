@@ -13,11 +13,11 @@ model:
             elements: [C]
             cutoff: 3.7 # radial cutoff in Å
             layers: 2
-            channels: 32
+            channels: 16
             hidden_irreps: 0e + 1o
             l_max: 2
             correlation: 3
-            self_interaction: linear
+            self_connection: true
 
 # ... on structures from local files ...
 data:
@@ -40,9 +40,9 @@ loss:
 # ... with the following settings ...
 fitting:
     trainer_kwargs:
-        max_epochs: 100
+        max_epochs: 50
         accelerator: auto
-        check_val_every_n_epoch: 5
+        check_val_every_n_epoch: 1
 
     optimizer:
         +Optimizer:
@@ -56,7 +56,7 @@ fitting:
             patience: 10
 
     loader_kwargs:
-        batch_size: 16
+        batch_size: 64
 
 # ... and log to Weights & Biases
 wandb: null
