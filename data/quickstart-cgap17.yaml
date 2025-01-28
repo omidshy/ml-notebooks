@@ -2,18 +2,21 @@ general:
     run_id: quickstart-cgap17
     progress: logged
 
-# train a lightweight SchNet model ...
+# train a lightweight MACE model ...
 model:
     offset:
         # note the "+" prefix syntax: refer to the
         # data2objects package for more details
         +FixedOffset: { C: -148.314002 }
     many-body:
-        +SchNet:
+        +MACE:
             elements: [C]
-            cutoff: 4.0 # radial cutoff in Å
-            layers: 3
-            channels: 64
+            cutoff: 3.7 # radial cutoff in Å
+            layers: 2
+            channels: 32
+            hidden_irreps: 0e + 1o
+            l_max: 2
+            correlation: 3
             self_interaction: linear
 
 # ... on structures from local files ...
@@ -21,13 +24,13 @@ data:
     train:
         +file_dataset:
             path: train-cgap17.xyz
-            cutoff: 4.0
+            cutoff: 3.7
             n: 1280
             shuffle: false
     valid:
         +file_dataset:
             path: val-cgap17.xyz
-            cutoff: 4.0
+            cutoff: 3.7
 
 # ... on both energy and forces (weighted 1:1) ...
 loss:
@@ -37,13 +40,13 @@ loss:
 # ... with the following settings ...
 fitting:
     trainer_kwargs:
-        max_epochs: 250
+        max_epochs: 100
         accelerator: auto
         check_val_every_n_epoch: 5
 
     optimizer:
         +Optimizer:
-            name: Adam
+            name: AdamW
             lr: 0.01
 
     scheduler:
@@ -53,7 +56,7 @@ fitting:
             patience: 10
 
     loader_kwargs:
-        batch_size: 64
+        batch_size: 16
 
 # ... and log to Weights & Biases
 wandb: null
