@@ -1,5 +1,7 @@
+# define a radial cutoff to use throughout the config
+CUTOFF: 3.7 # in Å
+
 general:
-    run_id: quickstart-cgap17
     progress: logged
 
 # train a lightweight MACE model ...
@@ -11,7 +13,7 @@ model:
     many-body:
         +MACE:
             elements: [C]
-            cutoff: 3.7 # radial cutoff in Å
+            cutoff: =/CUTOFF # radial cutoff in Å
             layers: 2
             channels: 16
             hidden_irreps: 0e + 1o
@@ -22,25 +24,21 @@ model:
 # ... on structures from local files ...
 data:
     train:
-        +file_dataset:
-            path: train-cgap17.xyz
-            cutoff: 3.7
-            n: 1280
-            shuffle: false
-    valid:
-        +file_dataset:
-            path: val-cgap17.xyz
-            cutoff: 3.7
+        path: train-cgap17.xyz
+        n: 1280
+        shuffle: false
+    valid: val-cgap17.xyz
+    test: test-cgap17.xyz
 
 # ... on both energy and forces (weighted 1:1) ...
 loss:
     - +PerAtomEnergyLoss()
-    - +PropertyLoss: { property: forces, metric: RMSE }
+    - +ForceRMSE()
 
 # ... with the following settings ...
 fitting:
     trainer_kwargs:
-        max_epochs: 40
+        max_epochs: 50
         accelerator: auto
         check_val_every_n_epoch: 1
 
@@ -56,7 +54,8 @@ fitting:
             patience: 10
 
     loader_kwargs:
-        batch_size: 64
+        batch_size: 16
+        num_workers: 4
 
 # ... and log to Weights & Biases
 wandb: null
