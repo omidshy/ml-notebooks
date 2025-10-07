@@ -1,0 +1,65 @@
+# define a radial cutoff to use throughout the config
+CUTOFF: 5.0 # in Å
+
+general:
+    progress: logged
+
+# train a lightweight MACE model ...
+model:
+    offset:
+        # note the "+" prefix syntax: refer to the
+        # data2objects package for more details
+        +FixedOffset: { H: −13.511, O: −429.804 }
+    many-body:
+        +MACE:
+            elements: [H, O]
+            cutoff: =/CUTOFF # radial cutoff in Å
+            layers: 2
+            channels: 32
+            hidden_irreps: 0e + 1o
+            l_max: 2
+            correlation: 3
+            self_connection: true
+
+# ... on structures from local files ...
+data:
+    train:
+        path: train-water.xyz
+        n: 640
+        shuffle: true
+    valid: val-water.xyz
+    test: test-water.xyz
+
+# ... on both energy and forces (weighted 1:1) ...
+loss:
+    - +PerAtomEnergyLoss()
+    - +ForceRMSE()
+
+# ... with the following settings ...
+fitting:
+    trainer_kwargs:
+        max_epochs: 100
+        accelerator: auto
+        check_val_every_n_epoch: 1
+
+    optimizer:
+        +Optimizer:
+            name: AdamW
+            lr: 0.01
+            weight_decay: 0.01
+            amsgrad: true
+
+    scheduler:
+        +LRScheduler:
+            name: ReduceLROnPlateau
+            factor: 0.5
+            patience: 10
+
+    loader_kwargs:
+        batch_size: 4
+        num_workers: 2
+        shuffle: true
+
+# ... and log to Weights & Biases
+wandb: null
+#    project: graph-pes-quickstart
