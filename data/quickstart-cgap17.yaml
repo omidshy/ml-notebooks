@@ -38,7 +38,7 @@ loss:
 # ... with the following settings ...
 fitting:
     trainer_kwargs:
-        max_epochs: 50
+        max_epochs: 100
         accelerator: auto
         check_val_every_n_epoch: 1
 
@@ -54,7 +54,7 @@ fitting:
             patience: 10
 
     loader_kwargs:
-        batch_size: 16
+        batch_size: 64
         num_workers: 2
 
 # ... and log to Weights & Biases
