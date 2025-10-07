@@ -9,7 +9,7 @@ model:
     offset:
         # note the "+" prefix syntax: refer to the
         # data2objects package for more details
-        +FixedOffset: { H: −13.511, O: −429.804 }
+        +FixedOffset: { H: -13.511, O: -429.804 }
     many-body:
         +MACE:
             elements: [H, O]
@@ -38,7 +38,7 @@ loss:
 # ... with the following settings ...
 fitting:
     trainer_kwargs:
-        max_epochs: 100
+        max_epochs: 50
         accelerator: auto
         check_val_every_n_epoch: 1
 
@@ -56,7 +56,7 @@ fitting:
             patience: 10
 
     loader_kwargs:
-        batch_size: 4
+        batch_size: 8
         num_workers: 2
         shuffle: true
 
