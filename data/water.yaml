@@ -35,7 +35,7 @@ loss:
 
 # ... with the following settings ...
 fitting:
-	pre_fit_model: false
+    pre_fit_model: false
 
     trainer_kwargs:
         max_epochs: 40
