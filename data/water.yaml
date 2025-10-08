@@ -35,8 +35,6 @@ loss:
 
 # ... with the following settings ...
 fitting:
-    pre_fit_model: false
-
     trainer_kwargs:
         max_epochs: 40
         accelerator: auto
@@ -56,7 +54,7 @@ fitting:
             patience: 10
 
     loader_kwargs:
-        batch_size: 1
+        batch_size: 2
         num_workers: 2
         shuffle: true
 
